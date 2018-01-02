@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Contract</title>
+
+    <link rel="stylesheet" type="text/css" href="./static/main.css">
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Set contract address</h1>
+
+        <label for="name" class="col-lg-2 control-label">Contract Address</label>
+        <input id="addr" type="text">
+
+        <button id="button-con">Update</button>
+
+    </div>
+
+    <hr>
+
+    <div class="container">
+
+        <h1>User</h1>
+
+        <h2 id="user"></h2>
+
+        <img id="loader" src="./static/loading.gif">
+
+        <label for="name" class="col-lg-2 control-label">User's Name</label>
+        <input id="name" type="text">
+
+        <label for="name" class="col-lg-2 control-label">User's Email</label>
+        <input id="email" type="text">
+
+        <label for="name" class="col-lg-2 control-label">User's Age</label>
+        <input id="age" type="number">
+
+        <button id="button-user">Update User</button>
+
+    </div>
+
+    <hr>
+
+    <div class="container">
+
+        <h1>Send Ethers between accounts</h1>
+
+        <h2 id="acc"></h2>
+
+        <label for="name" class="col-lg-2 control-label">Send from account</label>
+        <input id="acc1" type="text">
+
+        <label for="name" class="col-lg-2 control-label">Send to account</label>
+        <input id="acc2" type="text">
+
+        <label for="name" class="col-lg-2 control-label">Amount of Ethers</label>
+        <input id="amount" type="number">
+
+        <button id="button-acc">Send Transaction</button>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+
+        if (typeof web3 !== 'undefined') {
+            web3 = new Web3(web3.currentProvider);
+        } else {
+            // set the provider to be the localhost for testing
+            web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+        }
+        web3.eth.defaultAccount = web3.eth.accounts[0];
+        
+        var myContractABI = web3.eth.contract(
+            [
+                {
+                    "constant": true,
+                    "inputs": [],
+                    "name": "getUser",
+                    "outputs": [
+                        {
+                            "name": "",
+                            "type": "string"
+                        },
+                        {
+                            "name": "",
+                            "type": "string"
+                        },
+                        {
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "payable": false,
+                    "stateMutability": "view",
+                    "type": "function"
+                },
+                {
+                    "anonymous": false,
+                    "inputs": [
+                        {
+                            "indexed": false,
+                            "name": "name",
+                            "type": "string"
+                        },
+                        {
+                            "indexed": false,
+                            "name": "email",
+                            "type": "string"
+                        },
+                        {
+                            "indexed": false,
+                            "name": "age",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "User",
+                    "type": "event"
+                },
+                {
+                    "constant": false,
+                    "inputs": [
+                        {
+                            "name": "_name",
+                            "type": "string"
+                        },
+                        {
+                            "name": "_email",
+                            "type": "string"
+                        },
+                        {
+                            "name": "_age",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "setUser",
+                    "outputs": [],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [],
+                    "payable": false,
+                    "stateMutability": "nonpayable",
+                    "type": "constructor"
+                }
+            ]
+        );
+
+        var myContract = myContractABI.at('0xfd21cc63bbe60921f416cc91ff76dc83ef7f99bf');
+        console.log(myContract);
+        var userEvent = myContract.User();
+
+        $("#button-con").click(function () {
+            contractAddress = $("#addr").val();
+            myContract = myContractABI.at(contractAddress);
+            console.log(myContract);
+            userEvent = myContract.User();
+        });
+
+        $("#button-user").click(function () {
+            $("#loader").show();
+            myContract.setUser($("#name").val(), $("#email").val(), $("#age").val(), (err, res) => {
+                if (err) {
+                    console.log(err)
+                    $("#loader").hide();
+                }
+            });
+        });
+
+        $("#button-acc").click(function () {
+            accountFrom = $("#acc1").val();
+            accountTo = $("#acc2").val();
+            
+            amount = web3.toWei($("#amount").val(), "ether");
+
+            transactionAddr = web3.eth.sendTransaction({ from: accountFrom, to: accountTo, value: amount });
+
+            $("#acc").html('Transaction Address: ' + transactionAddr);
+        });
+
+
+        userEvent.watch(function (error, res) {
+            if (!error) {
+                $("#loader").hide();
+                if (res.args.age > 0) {
+                    $("#user").html("User's Name: " + res.args.name + '<br>' + "User's Email: " + res.args.email + '<br>' + "User's Age: " + res.args.age);
+                }
+            } else {
+                $("#loader").hide();
+                console.log(error);
+            }
+        });
+
+    </script>
+
+</body>
+
+</html>

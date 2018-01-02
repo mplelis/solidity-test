@@ -1,0 +1,36 @@
+body {
+    background-color:#F0F0F0;
+    padding: 3em;
+    font-family: 'Arial';
+}
+.container {
+    width: 60%;
+    margin: auto;
+}
+
+input {
+    padding: 8px;
+    width: 60%;
+    margin-bottom: 2em;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+button {
+    margin: 2em 0;
+    padding: 1em 4em;
+    display: block;
+}
+
+#user {
+    padding: 1em;
+    margin: 1em 0;
+}
+
+#loader {
+    width: 200px;
+    display: none;
+}
