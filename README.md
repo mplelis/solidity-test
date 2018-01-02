@@ -5,17 +5,17 @@ It has a simple functionality, of updating the User, using Smart Contract's meth
 
 # Execution instructions
 
-1.  Install Node to your computer and verify the installation of node and npm, using the following commands:
-        > node -v
+1.  Install Node to your computer and verify the installation of node and npm, using the following commands:  
+        > node -v  
         > npm -v
 
-2.  Install Ethereum JS testrpc in order to run the project locally:
+2.  Install Ethereum JS testrpc in order to run the project locally:  
         > npm install -g ethereumjs-testrpc
 
-3.  Run the testrpc:
+3.  Run the testrpc:  
         > testrpc
 
-4.  Open the project's directory and run the command:
+4.  Open the project's directory and run the command:  
         > npm install
 
 5.  Open *http://remix.ethereum.org/* in your browser and change the environment to Web3 Provider, which is located in the "Run" tab.
